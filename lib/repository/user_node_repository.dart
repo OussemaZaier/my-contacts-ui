@@ -16,11 +16,11 @@ class UserNode extends UserRepository {
     try {
       final response = await dio.post(
           'http://192.168.1.20:5000/api/users/login',
-          data: {'email': '222@mail.tntes', 'password': '147258qsd8ous'});
+          data: {'email': email, 'password': password});
       return ApiSuccessResponse(
-        status: response.statusCode.toString(),
-        message: response.data,
-        data: response.data,
+        status: response.data["status"],
+        message: response.data["message"],
+        data: response.data["data"],
       );
     } on DioException catch (e) {
       return getErrorResponse(e);
