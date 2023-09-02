@@ -14,37 +14,56 @@ class LoginViewModel extends ChangeNotifier {
   ApiResponse? get res => _res;
   String? get error => _error;
 
-  setLoading(bool loading) async {
+  final userRepository = UserNode();
+
+  setLoading(bool loading) {
     _loading = loading;
     notifyListeners();
   }
 
-  setResponse(ApiResponse res) async {
+  setResponse(ApiResponse res) {
     _res = res;
   }
 
-  setError(String error) async {
+  setError(String error) {
     _error = error;
   }
 
   login(String email, String password) async {
     setLoading(true);
-    final userRepository = UserNode();
-    var reponse = await userRepository.login(email, password);
-    if (reponse is ApiSuccessResponse) {
+    var response = await userRepository.login(email, password);
+    if (response is ApiSuccessResponse) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', reponse.data);
-      setResponse(reponse);
-      print(reponse.status);
-      print(reponse.message);
-      print(reponse.data);
+      await prefs.setString('token', response.data);
+      setResponse(response);
+      print(response.status);
+      print(response.message);
+      print(response.data);
     }
-    if (reponse is ApiErrorResponse) {
-      setError(reponse.message);
-      print(reponse.status);
-      print(reponse.message);
+    if (response is ApiErrorResponse) {
+      setError(response.message);
+      print(response.status);
+      print(response.message);
     }
+    setLoading(false);
+  }
 
+  verifyToken(String token) async {
+    setLoading(true);
+    var response = await userRepository.verifyToken(token);
+
+    if (response is ApiSuccessResponse) {
+      setResponse(response);
+      print(response.status);
+      print(response.message);
+      print(response.data);
+    }
+    if (response is ApiErrorResponse) {
+      setError(response.message);
+      print('here');
+      print(response.status);
+      print(response.message);
+    }
     setLoading(false);
   }
 }

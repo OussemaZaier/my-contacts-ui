@@ -1,27 +1,97 @@
+import 'package:azlistview/azlistview.dart';
+import 'package:contacts_flutter/utils/get_token.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class ContactsPage extends StatelessWidget {
-  ContactsPage({super.key});
+import '../models/contact_model.dart';
 
-  late final SharedPreferences _prefs;
-  late final _prefsFuture =
-      SharedPreferences.getInstance().then((v) => _prefs = v);
+class ContactsPage extends StatefulWidget {
+  const ContactsPage({super.key});
+
+  @override
+  State<ContactsPage> createState() => _ContactsPageState();
+}
+
+class _ContactsPageState extends State<ContactsPage> {
+  final _token = Token();
+  //Contact data
+  final List<Contact> _contacts = [];
+
+  @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
+
+  void loadData() {
+    for (var i = 0; i < 10; i++) {
+      _contacts.add(
+        Contact(
+            id: i.toString(),
+            userId: i.toString(),
+            name: 'auser $i',
+            email: 'email_user$i@email.tn',
+            phone: '25117179'),
+      );
+    }
+    for (var i = 0; i < 10; i++) {
+      _contacts.add(
+        Contact(
+            id: i.toString(),
+            userId: i.toString(),
+            name: 'zuser $i',
+            email: 'email_user$i@email.tn',
+            phone: '25117179'),
+      );
+    }
+    for (var i = 0; i < 10; i++) {
+      _contacts.add(
+        Contact(
+            id: i.toString(),
+            userId: i.toString(),
+            name: 'xuser $i',
+            email: 'email_user$i@email.tn',
+            phone: '25117179'),
+      );
+    }
+    for (var i = 0; i < 10; i++) {
+      _contacts.add(
+        Contact(
+            id: i.toString(),
+            userId: i.toString(),
+            name: 'user $i',
+            email: 'email_user$i@email.tn',
+            phone: '25117179'),
+      );
+    }
+    print(_contacts[0].tag);
+    // _handleList(_contacts);
+  }
+
+  void _handleList(List<Contact> list) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: _prefsFuture,
+        future: _token.getToken,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Text(_prefs.getString('token') ??
-                'null'); // `_prefs` is ready for use.
+            return AzListView(
+                data: _contacts,
+                itemCount: _contacts.length,
+                itemBuilder: (context, index) {
+                  final contact = _contacts[index];
+                  return _buildContact(contact);
+                }); // `_prefs` is ready for use.
           }
 
-          // `_prefs` is not ready yet, show loading bar till then.
           return const CircularProgressIndicator();
         },
       ),
     );
   }
+
+  Widget _buildContact(Contact contact) => ListTile(
+        title: Text(contact.name),
+      );
 }
